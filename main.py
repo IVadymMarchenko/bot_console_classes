@@ -18,13 +18,14 @@ class Name(Field):
 
 class Phone(Field):
 
+
     def __init__(self, number):
         if not Phone.find_phone(number):
             raise ValueError("Invalid phone number format")
         super().__init__(number)
 
-    def find_phone(self):
-        return len(self) == 10 and self.isdigit()
+    def find_phone(number):
+        return len(number) == 10 and number.isdigit()
 
 
 class Record(Field):
@@ -63,16 +64,14 @@ class Record(Field):
 
 class AddressBook(UserDict):
 
-     def add_record(self, record):
-        name = record.value  
+    def add_record(self, record):
+        name = record.value  # Предполагается, что у записи есть атрибут value (имя)
         self.data[name] = record
 
 
     def find(self,name):
         if name in self.data.keys():
             return self.data[name]
-        return None
+        else:
+            return None
 
-    def delete(self,name):
-        if name in self.data.keys():
-            del self.data[name]
