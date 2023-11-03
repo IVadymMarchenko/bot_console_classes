@@ -75,3 +75,11 @@ class AddressBook(UserDict):
         else:
             return None
 
+
+    def delete(self,name):
+        if name in self.data.keys():
+            del self.data[name]
+        else:
+            return None
+
+
