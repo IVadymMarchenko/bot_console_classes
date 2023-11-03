@@ -65,7 +65,7 @@ class Record(Field):
 class AddressBook(UserDict):
 
     def add_record(self, record):
-        name = record.value  # Предполагается, что у записи есть атрибут value (имя)
+        name = record.value 
         self.data[name] = record
 
 
