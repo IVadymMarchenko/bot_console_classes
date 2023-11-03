@@ -63,8 +63,9 @@ class Record(Field):
 
 class AddressBook(UserDict):
 
-    def add_record(self,name, phone):
-        self.data.setdefault(name,phone)
+     def add_record(self, record):
+        name = record.value  
+        self.data[name] = record
 
 
     def find(self,name):
