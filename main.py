@@ -4,6 +4,13 @@ from datetime import datetime
 class Field:
     def __init__(self, value):
         self._value = value
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self,new_value):
+        self._value=new_value
 
     def __str__(self):
         return str(self._value)
@@ -12,8 +19,7 @@ class Field:
 class Name(Field):
 
     def __init__(self, name):
-        self.name = name
-        super().__init__(self.value)
+        super().__init__(name)
 
     @property
     def value(self):
@@ -29,19 +35,54 @@ class Phone(Field):
 
 
     def __init__(self, number):
-        if not Phone.find_phone(number):
-            raise ValueError("Invalid phone number format")
+        self.find_phone(number)
         super().__init__(number)
 
-    def find_phone(number):
-        return len(number) == 10 and number.isdigit()
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, new_value):
+        self.find_phone(new_value)
+
+    def find_phone(self, phone):
+        if len(phone) == 10 and phone.isdigit():
+            self._value = phone
+        else:
+            raise ValueError("Invalid phone number format")
 
 
 class Birthday:
-    def __init__(self,year,manth,day):
-        self.year=year
-        self. month=manth
-        self.day=day
+    def __init__(self,year,month,day):
+        self._value=self.valid_birthday(year, month, day)
+    @property
+    def value(self):
+        return self._value
+    @value.setter
+    def value(self,new_value):
+        year,month,day=map(int,new_value.split('-'))
+        self.value=self.valid_birthday(year,month,day)
+
+    def valid_birthday(self,year,month,day):
+        try:
+            return datetime(year,month,day)
+        except ValueError:
+            raise ValueError('Enter valid date')
+
+    @property
+    def year(self):
+        return self._value.year
+
+    @property
+    def month(self):
+        return self._value.month
+
+    @property
+    def day(self):
+        return self._value.day
+
+
 
 
 class Record(Field):
@@ -52,23 +93,21 @@ class Record(Field):
         self.birthday=birthday
         super().__init__(name)
 
-    def add_phone(self, number):
-        if Phone.find_phone(number):
-            self.phone.append(number)
-        else:
-            raise ValueError("Invalid phone number format")
+    def add_phone(self,number):
+        if number:
+            num=Phone(number)
+            self.phone.append(num)
+
 
     def remove_phone(self, phone):
         if phone in self.phone:
             self.phone.remove(phone)
 
-
     def edit_phone(self, phone_old, phone_new):
-        if phone_old in self.phone and len(phone_new) == 10:
-            index_phone = self.phone.index(phone_old)
-            self.phone[index_phone] = phone_new
-        else:
-            raise ValueError
+        for phone_obj in self.phone:
+            if phone_obj.value == phone_old:
+                phone_obj.find_phone(phone_new)
+                break
 
 
     def find_phone(self, number):
@@ -90,7 +129,8 @@ class Record(Field):
         return f'birthday is unknown'
 
     def __str__(self):
-        return f"Contact name: {self.name}, phones: {''.join(p for p in self.phone)}"
+        phones_str = ', '.join(str(phone) for phone in self.phone)
+        return f"Contact name: {self.name}, phones: {phones_str}"
 
 class AddressBook(UserDict):
     index_iterator=0
@@ -122,6 +162,5 @@ class AddressBook(UserDict):
             contacts = [f'{record}' for name, record in list_data[index_iteration:index_iteration + note]]
             yield  '\n'.join(contacts)
             index_iteration += note
-
 
 
